@@ -1,12 +1,12 @@
 from flask import Flask, jsonify, request
 
-app = Flask(__name__)
+# app = Flask(__name__)
 
-@app.route('/')
+#@app.route('/')
 def index():
     return "Hello, World!"
 
-@app.route('/api/data', methods=['GET', 'POST'])
+# @app.route('/api/data', methods=['GET', 'POST'])
 def handle_data():
     if request.method == 'POST':
         data = request.get_json()
@@ -16,8 +16,8 @@ def handle_data():
         # retrieve the data and return it
         return jsonify({'data': 'example data'})
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# if __name__ == '__main__':
+#    app.run(debug=True)
 
 
 '''

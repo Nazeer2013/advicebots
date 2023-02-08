@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Audio Capture and Transfer</title>
+  </head>
+  <body>
+    <h1>Audio Capture and Transfer</h1>
+    <p>Click the Start button to start capturing audio from your browser:</p>
+    <button id="start-button">Start</button>
+    <script>
+      const startButton = document.getElementById("start-button");
+      startButton.addEventListener("click", () => {
+        navigator.mediaDevices.getUserMedia({ audio: true })
+          .then(stream => {
+            const audioChunks = [];
+            const audioRecorder = new MediaRecorder(stream);
+            audioRecorder.ondataavailable = event => {
+              audioChunks.push(event.data);
+              if (audioRecorder.state === "inactive") {
+                const audioBlob = new Blob(audioChunks);
+                sendAudioToServer(audioBlob);
+              }
+            };
+            audioRecorder.start();
+          })
+          .catch(console.error);
+      });
+
+      async function sendAudioToServer(audioBlob) {
+        const formData = new FormData();
+        formData.append("audio_data", audioBlob, "audio.wav");
+        const response = await fetch("http://localhost:5000/audio", {
+          method: "POST",
+          body: formData
+        });
+        console.log(await response.text());
+      }
+    </script>
+  </body>
+</html>
