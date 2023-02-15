@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Audio Stream to Text Conversion</title>
+  </head>
+  <body>
+    <h1>Audio Stream to Text Conversion</h1>
+    <button id="start-button">Start Recording</button>
+    <button id="stop-button">Stop Recording</button>
+    <script>
+      const startButton = document.querySelector("#start-button");
+      const stopButton = document.querySelector("#stop-button");
+
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+          const mediaRecorder = new MediaRecorder(stream);
+          const audioChunks = [];
+
+          mediaRecorder.addEventListener("dataavailable", event => {
+            audioChunks.push(event.data);
+          });
+
+          startButton.addEventListener("click", () => {
+            mediaRecorder.start();
+          });
+
+          stopButton.addEventListener("click", () => {
+            mediaRecorder.stop();
+          });
+
+          mediaRecorder.addEventListener("stop", () => {
+            const audioBlob = new Blob(audioChunks);
+
+            const audioForm = new FormData();
+            audioForm.append("audio", audioBlob, "audio.wav");
+
+            fetch("/api/speech-to-text", {
+              method: "POST",
+              body: audioForm
+            })
+              .then(response => response.text())
+              .then(text => {
+                console.log(text);
+              });
+          });
+        });
+    </script>
+  </body>
+</html>

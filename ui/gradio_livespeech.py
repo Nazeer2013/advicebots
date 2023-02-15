@@ -27,5 +27,5 @@ outputs = recognize_speech
 # set up recognizer
 recognizer = sr.Recognizer()
 
-iface = gr.Interface(inputs, outputs, title="Speech Recognition", capture_session=True)
+iface = gr.Interface(live_audio_input, inputs, outputs, title="Speech Recognition", capture_session=True)
 iface.launch()
